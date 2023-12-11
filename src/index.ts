@@ -79,33 +79,6 @@ drawBalls();
 
 
 
-// function tick(currentTime: number) {
-//     const deltaTime = (currentTime - lastTime) / 1000; // Convert milliseconds to seconds
-
-//     // Update game elements using deltaTime
-//     canvasBalls.clearRect(0, 0, canvas.width, canvas.height);
-//     drawBalls(deltaTime);
-
-//     lastTime = currentTime;
-//     requestAnimationFrame(tick);
-//   }
-
-
-// canvas.addEventListener("click", (event: MouseEvent) => {
-//     const newCircle = createBounceBall(
-//         event.clientX,
-//         event.clientY,
-//         Math.random() * 30 + 10,
-//         Math.random() * 5 - 2.5
-//     );
-//         circles.push(newCircle);
-//     if (circles.length > maxAmount) {    
-//         circles.shift()
-//     }
-// });
-// requestAnimationFrame(tick);
-
-
 
 
 
