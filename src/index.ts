@@ -96,5 +96,4 @@ function tick(currentTime: number) {
     requestAnimationFrame(tick);
 }
 
-
 requestAnimationFrame(tick);
