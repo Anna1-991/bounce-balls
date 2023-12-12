@@ -36,32 +36,29 @@ function drawBalls() {
 }
 ;
 canvas.addEventListener('click', (e) => {
-    const newCircle = createBounceBall(e.clientX, e.clientY, 30, -Math.random() * 10 - 5);
+    console.log('click');
+    const newCircle = createBounceBall(e.clientX, e.clientY, 40, -Math.random() * 10 - 5);
     circles.push(newCircle);
     if (circles.length >= maxAmount) {
         circles.shift();
     }
     drawBalls();
 });
-drawBalls();
-// function tick(currentTime: number) {
-//     const deltaTime = (currentTime - lastTime) / 1000; // Convert milliseconds to seconds
-//     // Update game elements using deltaTime
-//     canvasBalls.clearRect(0, 0, canvas.width, canvas.height);
-//     drawBalls(deltaTime);
-//     lastTime = currentTime;
-//     requestAnimationFrame(tick);
-//   }
-// canvas.addEventListener("click", (event: MouseEvent) => {
-//     const newCircle = createBounceBall(
-//         event.clientX,
-//         event.clientY,
-//         Math.random() * 30 + 10,
-//         Math.random() * 5 - 2.5
-//     );
-//         circles.push(newCircle);
-//     if (circles.length > maxAmount) {    
-//         circles.shift()
-//     }
-// });
-// requestAnimationFrame(tick);
+function updateBalls() {
+    circles.forEach(item => {
+        item.y += item.dy;
+        item.dy += gravity;
+        // Bounce effect
+        if (item.y + item.radius > canvas.height) {
+            item.y = canvas.height - item.radius;
+        }
+    });
+}
+function tick(currentTime) {
+    const deltaTime = currentTime - lastTime;
+    updateBalls();
+    drawBalls();
+    lastTime = currentTime;
+    requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
