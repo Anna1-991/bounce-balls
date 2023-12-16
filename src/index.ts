@@ -5,13 +5,14 @@ interface Circles {
     color: string;
     dy: number;
     initialDy: number;
+    creationTime: number;
 }
 
+const rNum = () => Math.floor(Math.random() * 255);
+
 function generateRandomColor(): string {
-    return `rgb(${Math.random() * 255}, ${Math.random() * 255}, ${
-        Math.random() * 255
-    })`;
-}
+    return `rgb(${rNum()}, ${rNum()}, ${rNum()})`;
+};
 
 function createBounceBall(
     x: number,
@@ -19,6 +20,7 @@ function createBounceBall(
     radius: number,
     initialDy: number
 ): Circles {
+    const currentTime = performance.now();
     return {
         x,
         y,
@@ -26,8 +28,9 @@ function createBounceBall(
         dy: initialDy,
         color: generateRandomColor(),
         initialDy,
+        creationTime: currentTime,
     };
-}
+};
 
 const canvas = document.getElementById("bounce_balls") as HTMLCanvasElement;
 const canvasBalls = canvas.getContext("2d") as CanvasRenderingContext2D;
@@ -35,65 +38,64 @@ const canvasBalls = canvas.getContext("2d") as CanvasRenderingContext2D;
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-canvasBalls.shadowBlur = 10;
-canvasBalls.shadowColor = generateRandomColor();
-canvasBalls.lineWidth = 2;
-
-
-const circles: Circles[] = [];
+let circles: Circles[] = [];
 const maxAmount = 12;
-const gravity = 0.8;
-const damping = 2;
-const radius = 50;
+const gravity = 5;
+const damping = 0.8; 
+const radius = 40; 
 let lastTime = 0;
 
-function drawBalls(){
+function drawBall() {
     canvasBalls.clearRect(0, 0, canvas.width, canvas.height);
 
-    circles.forEach(item => {
-
+    circles.forEach((circle) => {
+        const scale = Math.min(1, (performance.now() - circle.creationTime) / 1000);
+        canvasBalls.save();
+        canvasBalls.scale(scale, scale);
         canvasBalls.beginPath();
-        canvasBalls.arc(item.x, item.y, item.radius, 0, 2 * Math.PI);
-        canvasBalls.fillStyle = item.color;
+        canvasBalls.arc(circle.x / scale, circle.y / scale, circle.radius, 0, 2 * Math.PI);
+        canvasBalls.fillStyle = circle.color;
         canvasBalls.fill();
+        canvasBalls.restore();
     })
 };
 
-canvas.addEventListener('click', (e: MouseEvent) =>{
-    console.log('click');
-    
+canvas.addEventListener('click', (e: MouseEvent) => {
     const newCircle = createBounceBall(
         e.clientX,
         e.clientY,
-        40,
-        -Math.random() * 10 -5
-    )
+        radius,
+        -Math.random() * 40 - 5,
+    );
     circles.push(newCircle);
-    if(circles.length >= maxAmount){
-        circles.shift()
+    if (circles.length >= maxAmount) {
+        circles.shift();
     }
-    drawBalls();
 
-})
+    canvasBalls.shadowBlur = 25;
+    canvasBalls.shadowColor = generateRandomColor();
+    drawBall();
+});
 
-function updateBalls() {
-    circles.forEach(item => {
-        item.y += item.dy;
-        item.dy += gravity;
+function updateBalls(deltaTime: number) {
+    circles.forEach((circle) => {
+        circle.y -= circle.dy * deltaTime;
+        circle.dy -= gravity * deltaTime;
 
-        // Bounce effect
-        if (item.y + item.radius > canvas.height) {
-            item.y = canvas.height - item.radius;
+        if (circle.y + circle.radius > canvas.height) {
+            circle.y = canvas.height - circle.radius;
+            circle.dy = Math.abs(circle.dy) * damping;
+            circle.dy *= 5; 
         }
     });
-}
+};
 
 function tick(currentTime: number) {
-    const deltaTime = currentTime - lastTime;
-    updateBalls();
-    drawBalls();
+    const deltaTime = (currentTime - lastTime) / 1000; 
+    updateBalls(deltaTime);
+    drawBall();
     lastTime = currentTime;
     requestAnimationFrame(tick);
-}
+};
 
 requestAnimationFrame(tick);

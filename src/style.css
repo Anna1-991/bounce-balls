@@ -2,14 +2,13 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    
 }
 
-body{
+.container {
     overflow: hidden;
-    background-color: #ededed;
+    background: radial-gradient(circle, rgb(37, 37, 37), #141414);
 }
 
-.bounce_balls {
+#bounce_balls {
     display: block;
 }
